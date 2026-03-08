@@ -22,13 +22,13 @@ let allIssues = [];
 let currentTab = 'all';
 
 function showLoading() {
-    loadingSpinner.style.display = 'block';
-    issuesGrid.style.display = 'none';
-    noResults.style.display = 'none';
+    loadingSpinner.classList.remove('hidden');
+    issuesGrid.classList.add('hidden');
+    noResults.classList.add('hidden');
 }
 
 function hideLoading() {
-    loadingSpinner.style.display = 'none';
+    loadingSpinner.classList.add('hidden');
 }
 function formatDate(dateStr) {
     const date = new Date(dateStr);
@@ -73,13 +73,13 @@ function renderIssues(issues) {
     issuesGrid.innerHTML = '';
 
     if (issues.length === 0) {
-        issuesGrid.style.display = 'none';
-        noResults.style.display = 'block';
+        issuesGrid.classList.add('hidden');
+        noResults.classList.remove('hidden');
         return;
     }
 
-    noResults.style.display = 'none';
-    issuesGrid.style.display = 'grid';
+    noResults.classList.add('hidden');
+    issuesGrid.classList.remove('hidden');
 
     issues.forEach(issue => {
         const borderClass = issue.status === 'open' ? 'card-open' : 'card-closed';
@@ -96,25 +96,25 @@ function renderIssues(issues) {
             .join(' ');
 
         const card = document.createElement('div');
-        card.className = `issue-card ${borderClass}`;
+        card.className = `card bg-base-100 shadow-md issue-card ${borderClass}`;
         card.innerHTML = `
-            <div>
-                <div>
-                    <img src="${statusIcon}" alt="${issue.status}">
+            <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <img src="${statusIcon}" alt="${issue.status}" class="w-8 h-8">
                     <span class="priority-badge ${priorityClass}">${issue.priority.toUpperCase()}</span>
                 </div>
-                <h2 class="issue-title-link" onclick="openModal(${issue.id})">
+                <h2 class="card-title text-base font-bold issue-title-link" onclick="openModal(${issue.id})">
                     ${issue.title}
                 </h2>
-                <p>${issue.description}</p>
+                <p class="text-sm text-gray-500 mt-1 line-clamp-2">${issue.description}</p>
 
-                <div>
+                <div class="flex gap-2 mt-4">
                     ${labelsHTML}
                 </div>
 
-                <div>
-                    <p>#${issue.id} by ${issue.author}</p>
-                    <p>${formatDateShort(issue.createdAt)}</p>
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <p class="text-sm text-gray-600 font-medium">#${issue.id} by ${issue.author}</p>
+                    <p class="text-sm text-gray-400">${formatDateShort(issue.createdAt)}</p>
                 </div>
             </div>
         `;
@@ -147,14 +147,14 @@ async function fetchAllIssues() {
     } catch (err) {
         hideLoading();
         console.error('Error fetching issues:', err);
-        noResults.style.display = 'block';
+        noResults.classList.remove('hidden');
     }
 }
 
 async function openModal(id) {
     modalContent.innerHTML = `
-        <div>
-            <span>Loading...</span>
+        <div class="flex justify-center py-10">
+            <span class="loading loading-spinner loading-md"></span>
         </div>
     `;
     modal.showModal();
@@ -174,34 +174,34 @@ async function openModal(id) {
             .join(' ');
 
         modalContent.innerHTML = `
-            <h3>${issue.title}</h3>
-            <div>
-                <span class="${statusClass}">${statusText}</span>
-                <span>•</span>
-                <span>Opened by ${issue.author}</span>
-                <span>•</span>
-                <span>${formatDateShort(issue.createdAt)}</span>
+            <h3 class="font-bold text-xl mb-3">${issue.title}</h3>
+            <div class="flex items-center gap-2 text-sm mb-4">
+                <span class="${statusClass} font-semibold px-3 py-1 rounded-full text-xs">${statusText}</span>
+                <span class="text-gray-400">•</span>
+                <span class="text-gray-500">Opened by ${issue.author}</span>
+                <span class="text-gray-400">•</span>
+                <span class="text-gray-500">${formatDateShort(issue.createdAt)}</span>
             </div>
-            <div>
+            <div class="flex flex-wrap gap-2 mb-4">
                 ${labelsHTML}
             </div>
-            <p>${issue.description}</p>
-            <div>
+            <p class="text-gray-600 text-sm mb-6">${issue.description}</p>
+            <div class="flex items-end justify-between mt-4 pt-4 border-t border-gray-100">
                 <div>
-                    <p>Assignee:</p>
-                    <p>${issue.assignee || 'Unassigned'}</p>
+                    <p class="text-xs text-gray-400">Assignee:</p>
+                    <p class="font-semibold text-sm">${issue.assignee || 'Unassigned'}</p>
                 </div>
-                <div>
-                    <p>Priority:</p>
+                <div class="text-right">
+                    <p class="text-xs text-gray-400">Priority:</p>
                     <span class="priority-badge ${getPriorityClass(issue.priority)}">${issue.priority.toUpperCase()}</span>
                 </div>
             </div>
-            <div>
-                <button onclick="document.getElementById('issueModal').close()">Close</button>
+            <div class="flex justify-end mt-6">
+                <button class="btn btn-primary btn-sm" onclick="document.getElementById('issueModal').close()">Close</button>
             </div>
         `;
     } catch (err) {
-        modalContent.innerHTML = `<p>Failed to load issue details.</p>`;
+        modalContent.innerHTML = `<p class="text-error">Failed to load issue details.</p>`;
         console.error('Error fetching issue:', err);
     }
 }
@@ -227,7 +227,7 @@ async function searchIssues(query) {
     } catch (err) {
         hideLoading();
         console.error('Search error:', err);
-        noResults.style.display = 'block';
+        noResults.classList.remove('hidden');
     }
 }
 

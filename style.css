@@ -1,0 +1,177 @@
+
+.card-open {
+    border-top: 4px solid #22c55e;
+}
+
+.card-closed {
+    border-top: 4px solid #a855f7;
+}
+
+.issue-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.issue-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.tabs .tab-active {
+    background-color: #1f2937 ;
+    color: #fff ;
+    font-weight: 600;
+}
+
+.priority-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+}
+
+.priority-high {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.priority-medium {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.priority-low {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.label-badge-styled {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.label-red {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1.5px solid #fca5a5;
+}
+
+.label-yellow {
+    background-color: #fef9c3;
+    color: #b45309;
+    border: 1.5px solid #fde68a;
+}
+
+.label-blue {
+    background-color: #dbeafe;
+    color: #2563eb;
+    border: 1.5px solid #93c5fd;
+}
+
+.label-green {
+    background-color: #dcfce7;
+    color: #16a34a;
+    border: 1.5px solid #86efac;
+}
+
+.label-purple {
+    background-color: #f3e8ff;
+    color: #7c3aed;
+    border: 1.5px solid #c4b5fd;
+}
+
+.label-orange {
+    background-color: #ffedd5;
+    color: #ea580c;
+    border: 1.5px solid #fdba74;
+}
+
+.label-gray {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: 1.5px solid #d1d5db;
+}
+
+.modal-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.modal-field:last-child {
+    border-bottom: none;
+}
+
+.modal-field-label {
+    font-weight: 600;
+    color: #6b7280;
+    min-width: 100px;
+    font-size: 0.875rem;
+}
+
+.modal-field-value {
+    text-align: right;
+    font-size: 0.875rem;
+    color: #1f2937;
+}
+
+.issue-title-link {
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.issue-title-link:hover {
+    color: #6366f1;
+    text-decoration: underline;
+}
+
+.status-open {
+    background-color: #dcfce7;
+    color: #166534;
+    border: none;
+}
+
+.status-closed {
+    background-color: #f3e8ff;
+    color: #7c3aed;
+    border: none;
+}
+
+.modal-status-open {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.modal-status-closed {
+    background-color: #f3e8ff;
+    color: #7c3aed;
+}
+
+@media (max-width: 640px) {
+    .navbar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px 12px;
+    }
+
+    .navbar .flex-none {
+        width: 100%;
+    }
+
+    .navbar .flex-none .flex {
+        width: 100%;
+    }
+
+    .navbar .flex-none input {
+        flex: 1;
+    }
+}
