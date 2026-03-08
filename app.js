@@ -135,5 +135,153 @@ function filterIssues(tab) {
     if (tab === 'all') return allIssues;
     return allIssues.filter(issue => issue.status === tab);
 }
+async function fetchAllIssues() {
+    showLoading();
+    try {
+        const res = await fetch(`${API_BASE}/issues`);
+        const json = await res.json();
+        allIssues = json.data;
+        updateCounts(allIssues);
+        const filtered = filterIssues(currentTab);
+        renderIssues(filtered);
+    } catch (err) {
+        hideLoading();
+        console.error('Error fetching issues:', err);
+        noResults.style.display = 'block';
+    }
+}
+
+async function openModal(id) {
+    modalContent.innerHTML = `
+        <div>
+            <span>Loading...</span>
+        </div>
+    `;
+    modal.showModal();
+
+    try {
+        const res = await fetch(`${API_BASE}/issue/${id}`);
+        const json = await res.json();
+        const issue = json.data;
+
+        const statusClass = issue.status === 'open' ? 'modal-status-open' : 'modal-status-closed';
+        const statusText = issue.status.charAt(0).toUpperCase() + issue.status.slice(1);
+        const labelsHTML = issue.labels
+            .map(l => {
+                const colorClass = getLabelColorClass(l);
+                return `<span class="label-badge-styled ${colorClass}">${l.toUpperCase()}</span>`;
+            })
+            .join(' ');
+
+        modalContent.innerHTML = `
+            <h3>${issue.title}</h3>
+            <div>
+                <span class="${statusClass}">${statusText}</span>
+                <span>•</span>
+                <span>Opened by ${issue.author}</span>
+                <span>•</span>
+                <span>${formatDateShort(issue.createdAt)}</span>
+            </div>
+            <div>
+                ${labelsHTML}
+            </div>
+            <p>${issue.description}</p>
+            <div>
+                <div>
+                    <p>Assignee:</p>
+                    <p>${issue.assignee || 'Unassigned'}</p>
+                </div>
+                <div>
+                    <p>Priority:</p>
+                    <span class="priority-badge ${getPriorityClass(issue.priority)}">${issue.priority.toUpperCase()}</span>
+                </div>
+            </div>
+            <div>
+                <button onclick="document.getElementById('issueModal').close()">Close</button>
+            </div>
+        `;
+    } catch (err) {
+        modalContent.innerHTML = `<p>Failed to load issue details.</p>`;
+        console.error('Error fetching issue:', err);
+    }
+}
+
+async function searchIssues(query) {
+    if (!query.trim()) {
+        currentTab = 'all';
+        setActiveTab('all');
+        const filtered = filterIssues(currentTab);
+        renderIssues(filtered);
+        updateCounts(allIssues);
+        return;
+    }
+
+    showLoading();
+    try {
+        const res = await fetch(`${API_BASE}/issues/search?q=${encodeURIComponent(query)}`);
+        const json = await res.json();
+        const results = json.data;
+        updateCounts(results);
+        issueCount.textContent = `${results.length} Results`;
+        renderIssues(results);
+    } catch (err) {
+        hideLoading();
+        console.error('Search error:', err);
+        noResults.style.display = 'block';
+    }
+}
+
+function setActiveTab(tab) {
+    tabs.forEach(t => {
+        t.classList.remove('tab-active');
+        if (t.dataset.tab === tab) {
+            t.classList.add('tab-active');
+        }
+    });
+}
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        currentTab = tab.dataset.tab;
+        setActiveTab(currentTab);
+        searchInput.value = '';
+        const filtered = filterIssues(currentTab);
+        renderIssues(filtered);
+
+        const open = allIssues.filter(i => i.status === 'open').length;
+        const closed = allIssues.filter(i => i.status === 'closed').length;
+        issueCount.textContent = `${filtered.length} Issues`;
+        openCount.textContent = `${open} Open`;
+        closedCount.textContent = `${closed} Closed`;
+    });
+});
+
+openMarker.addEventListener('click', () => {
+    currentTab = 'open';
+    setActiveTab('open');
+    searchInput.value = '';
+    const filtered = filterIssues(currentTab);
+    renderIssues(filtered);
+    issueCount.textContent = `${filtered.length} Issues`;
+});
+
+closedMarker.addEventListener('click', () => {
+    currentTab = 'closed';
+    setActiveTab('closed');
+    searchInput.value = '';
+    const filtered = filterIssues(currentTab);
+    renderIssues(filtered);
+    issueCount.textContent = `${filtered.length} Issues`;
+});
+
+
+searchBtn.addEventListener('click', () => {
+    searchIssues(searchInput.value);
+});
+
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        searchIssues(searchInput.value);
+    }
+});
 
 fetchAllIssues();
